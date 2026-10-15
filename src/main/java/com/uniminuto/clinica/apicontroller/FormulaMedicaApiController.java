@@ -1,33 +1,22 @@
 package com.uniminuto.clinica.apicontroller;
 
 import com.uniminuto.clinica.api.FormulaMedicaApi;
-import com.uniminuto.clinica.models.FormulaMedicaRS;
-import com.uniminuto.clinica.service.FormulaMedicaService;
-import java.util.List;
-import org.apache.coyote.BadRequestException;
+import com.uniminuto.clinica.entity.FormulaMedica;
+import com.uniminuto.clinica.service.FormulaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Implementación REST de {@link FormulaMedicaApi}. Delega toda la lógica de
- * negocio en {@link FormulaMedicaService}.
- */
+import java.util.List;
+
 @RestController
 public class FormulaMedicaApiController implements FormulaMedicaApi {
 
-    /**
-     * Servicio de negocio de fórmulas médicas.
-     */
     @Autowired
-    private FormulaMedicaService formulaMedicaService;
+    private FormulaService formulaService;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ResponseEntity<List<FormulaMedicaRS>> listarFormulasMedicas()
-            throws BadRequestException {
-        return ResponseEntity.ok(formulaMedicaService.listarFormulasMedicas());
+    public ResponseEntity<List<FormulaMedica>> listarFormulas() {
+        return ResponseEntity.ok(this.formulaService.findAllFormulas());
     }
 }
