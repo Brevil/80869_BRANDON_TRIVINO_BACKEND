@@ -4,13 +4,13 @@ Backend Spring Boot (`80869_BRANDON_TRIVINO_BACKEND`) y frontend Angular (`80869
 
 ## 1. Puesta en marcha
 
-1. **Base de datos (MariaDB o MySQL en `localhost:3306`, usuario `root`, contraseña `12345`, según `application-dev.properties`).**
-   - Esquema: `mariadb -u root -p < database/clinica.sql`
-   - Datos de prueba (UTF-8): `mariadb --default-character-set=utf8mb4 -u root -p clinica < database/datos_prueba.sql`
-   - Si la base ya existe con el esquema anterior, las tablas `formula_medica`, `historia_medica` y `anotacion_historia` cambiaron. Hay que recrearlas con el script.
+1. **Base de datos (MySQL 8 en `localhost:3306`, usuario `root`, contraseña `12345`, según `application-dev.properties`).**
+   - Crear la base y cargar la base original (la base original del proyecto, con sus datos): `mysql -u root -p -e "CREATE DATABASE clinica CHARACTER SET utf8mb4;"` y luego `mysql -u root -p clinica < database/clinica.sql`.
+   - Aplicar la migración una sola vez: `mysql -u root -p clinica < database/migracion_clinica.sql`. Cambia el estado de las citas a mayúsculas y agrega las columnas que usan fórmulas, historias y anotaciones.
+   - La JVM del backend y el servidor MySQL deben usar la misma zona horaria (`America/Bogota`). Si no, las fechas se desplazan al leerse.
 2. **Backend:** `mvn spring-boot:run` (puerto 8080, contexto `/clinica/v1`).
 3. **Frontend:** `npm ci` y luego `npm start`. Abrir `http://localhost:4200/#/inicio`.
-4. **Pruebas de API:** `bash pruebas/pruebas_api.sh` (con el backend corriendo y la base recién cargada).
+4. **Pruebas de API:** `bash pruebas/pruebas_api.sh` (con el backend corriendo). Crea sus propios registros, así que se puede repetir.
 
 ## 2. Modelo de datos
 
@@ -101,8 +101,8 @@ Los errores responden `{status, error, message}`. Códigos: 400 para validacione
 - Reglas de negocio de las secciones 1 a 3 del PDF (sección 4 de este documento).
 - `BadRequestException` acepta estado HTTP (404 para no encontrado). `GlobalExceptionHandler` añade manejo de parámetros inválidos y oculta los detalles técnicos.
 - Corrección: los GET de cliente y mascota tenían `consumes` y fallaban sin `Content-Type`.
-- Esquema y datos de prueba en `database/`.
-- Pruebas: `CitaServiceImplTest` (3 casos: cruce de horario, citas canceladas e inmodificabilidad de atendidas) y el script `pruebas/pruebas_api.sh` (50 casos de API).
+- Base original (`database/clinica.sql`) y migración (`database/migracion_clinica.sql`).
+- Pruebas: `CitaServiceImplTest` (3 casos: cruce de horario, citas canceladas e inmodificabilidad de atendidas) y el script `pruebas/pruebas_api.sh` (31 casos de API sobre la base migrada).
 
 **Frontend**
 - Módulo de fórmulas médicas reescrito: listado con búsqueda, filtro por veterinario, orden por columna y paginación, más formulario con combos dependientes y detalle de solo lectura.
@@ -116,8 +116,9 @@ Los errores responden `{status, error, message}`. Códigos: 400 para validacione
 ## 7. Verificación realizada
 
 - `mvn compile` y `mvn test`: 4 pruebas pasan (3 unitarias y la de contexto).
-- Pruebas de API con curl contra MariaDB: 50 de 50 casos correctos.
-- Flujos en navegador (Chromium con Playwright) contra el backend real: 13 de 13 correctos. Incluyen agendar, cruce de horario, marcar cita atendida, crear fórmula, crear historia y agregar anotación.
+- Base original de MySQL 8.0.46 (la misma versión que la del equipo): importación limpia y migración aplicada sin errores.
+- `pruebas/pruebas_api.sh` sobre la base migrada: 31 de 31 casos correctos.
+- Antes de cambiar a la base del equipo, 50 casos de API y 13 flujos de navegador (Chromium con Playwright) pasaron contra una base de prueba. Esa base ya no se usa.
 - `ng build` (desarrollo y producción) compila sin errores. `ng lint` reporta 16 errores, todos en archivos que ya existían y no se tocaron.
 
 ## 8. Pendientes y limitaciones
@@ -126,3 +127,6 @@ Los errores responden `{status, error, message}`. Códigos: 400 para validacione
 - Algunas clases del backend que no se tocaron (`Raza*`, `ClinicaApi`) no tienen Javadoc completo.
 - Las entidades se devuelven directamente en JSON, como en el resto del proyecto. Por eso las respuestas incluyen objetos relacionados.
 - La paginación y el filtrado son en el cliente. Con mucha más información convendría moverlos al servidor.
+- Fórmula 1 de la base original: su fecha de emisión (2025-09-17) es anterior a su cita (2025-10-16), y la regla lo rechaza al editarla. Hay que corregir la fecha. La migración no cambia fechas.
+- Fórmulas 1, 2, 4 y 5 no tienen frecuencia ni duración en la base original. Quedan vacías hasta que se editen.
+- Las relaciones entre tablas no tienen claves foráneas en la base original. La integridad la validan el backend y las reglas de negocio, no la base. Añadirlas exige igualar tipos de columna (`int` contra `bigint unsigned`).
