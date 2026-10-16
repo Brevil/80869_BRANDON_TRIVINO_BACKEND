@@ -7,6 +7,7 @@ import com.uniminuto.clinica.models.MiRespuestaRS;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,9 +29,20 @@ public interface MascotaApi {
      * @throws BadRequestException excepcion.
      */
     @GetMapping(value = "/listar",
-            produces = {"application/json"},
-            consumes = {"application/json"})
+            produces = {"application/json"})
     ResponseEntity<List<Mascota>> listarMascotas()
+            throws BadRequestException;
+
+    /**
+     * Consulta una mascota por id.
+     *
+     * @param id id de la mascota.
+     * @return la mascota solicitada.
+     * @throws BadRequestException si no existe (404).
+     */
+    @GetMapping(value = "/{id}",
+            produces = {"application/json"})
+    ResponseEntity<Mascota> buscarMascota(@PathVariable Integer id)
             throws BadRequestException;
 
 
@@ -41,8 +53,7 @@ public interface MascotaApi {
      * @throws BadRequestException excepcion.
      */
     @GetMapping(value = "/listar-ordenado",
-            produces = {"application/json"},
-            consumes = {"application/json"})
+            produces = {"application/json"})
     ResponseEntity<List<Mascota>> listarMascotasOrdenado(
             @RequestParam boolean ascendente)
             throws BadRequestException;
@@ -55,8 +66,7 @@ public interface MascotaApi {
      * @throws BadRequestException excepcion.
      */
     @GetMapping(value = "/buscar-nombre",
-            produces = {"application/json"},
-            consumes = {"application/json"})
+            produces = {"application/json"})
     ResponseEntity<List<Mascota>> buscarMascotaPorNombre(
             @RequestParam String nombre)
             throws BadRequestException;
@@ -69,8 +79,7 @@ public interface MascotaApi {
      * @throws BadRequestException excepcion.
      */
     @GetMapping(value = "/buscar-by-cliente",
-            produces = {"application/json"},
-            consumes = {"application/json"})
+            produces = {"application/json"})
     ResponseEntity<List<Mascota>> buscarMascotaPorCliente(
             @RequestParam Long clienteId)
             throws BadRequestException;
@@ -82,8 +91,7 @@ public interface MascotaApi {
      * @throws BadRequestException excepcion.
      */
     @GetMapping(value = "/buscar-by-raza",
-            produces = {"application/json"},
-            consumes = {"application/json"})
+            produces = {"application/json"})
     ResponseEntity<List<Mascota>> buscarMascotaPorRaza(
             @RequestParam Integer razaId)
             throws BadRequestException;

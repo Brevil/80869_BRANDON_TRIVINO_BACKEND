@@ -11,6 +11,7 @@ import com.uniminuto.clinica.repository.MascotaRepository;
 import com.uniminuto.clinica.repository.RazaRepository;
 import com.uniminuto.clinica.service.MascotaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -50,6 +51,12 @@ public class MascotaServiceImpl implements MascotaService {
             mascotas = mascotaRepository.findAllByOrderByNombreMascotaDesc();
         }
         return mascotas;
+    }
+
+    @Override
+    public Mascota buscarMascota(Integer id) {
+        return mascotaRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("La mascota no existe", HttpStatus.NOT_FOUND));
     }
 
     @Override

@@ -12,6 +12,13 @@ public interface MascotaService {
 
     List<Mascota> listarMascotas();
 
+    /**
+     * @param id id de la mascota.
+     * @return la mascota solicitada.
+     * @throws BadRequestException si no existe (404).
+     */
+    Mascota buscarMascota(Integer id);
+
     List<Mascota> listarMascotasOrdenado(boolean ascendente);
 
     Optional<Mascota> findByNombreMascota(String nombreMascota);

@@ -13,12 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Controlador REST de citas; delega toda la lógica en {@link CitaService}.
+ */
 @RestController
 public class CitaApiController implements CitaApi {
 
     @Autowired
     private CitaService citaService;
-
 
     @Override
     public ResponseEntity<List<Cita>> listarCitas() throws BadRequestException {
@@ -29,6 +31,11 @@ public class CitaApiController implements CitaApi {
     public ResponseEntity<List<Cita>> listarCitasRango(LocalDateTime fechaInicio, LocalDateTime fechaFin)
             throws BadRequestException {
         return ResponseEntity.ok(this.citaService.listarCitasRango(fechaInicio, fechaFin));
+    }
+
+    @Override
+    public ResponseEntity<Cita> buscarCita(Long id) throws BadRequestException {
+        return ResponseEntity.ok(this.citaService.buscarCita(id));
     }
 
     @Override

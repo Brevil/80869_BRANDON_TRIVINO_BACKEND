@@ -8,15 +8,39 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * Acceso a datos de citas.
+ */
 @Repository
 public interface CitaRepository extends JpaRepository<Cita, Long> {
 
+    /**
+     * @return todas las citas, de la más reciente a la más antigua.
+     */
+    List<Cita> findAllByOrderByFechaHoraDesc();
+
+    /**
+     * @param fechaInicio inicio del rango (inclusive).
+     * @param fechaFin    fin del rango (inclusive).
+     * @return citas dentro del rango.
+     */
     List<Cita> findByFechaHoraBetween(LocalDateTime fechaInicio, LocalDateTime fechaFin);
 
-    Optional<Cita> findByMascotaAndMedico(Mascota mascota, Medico medico);
-
+    /**
+     * @param medico      veterinario.
+     * @param fechaInicio inicio del rango (inclusive).
+     * @param fechaFin    fin del rango (inclusive).
+     * @return citas del veterinario dentro del rango.
+     */
     List<Cita> findByMedicoAndFechaHoraBetween(Medico medico, LocalDateTime fechaInicio, LocalDateTime fechaFin);
+
+    /**
+     * @param mascota     mascota.
+     * @param fechaInicio inicio del rango (inclusive).
+     * @param fechaFin    fin del rango (inclusive).
+     * @return citas de la mascota dentro del rango.
+     */
+    List<Cita> findByMascotaAndFechaHoraBetween(Mascota mascota, LocalDateTime fechaInicio, LocalDateTime fechaFin);
 
 }

@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Anotación registrada por un veterinario dentro de una historia clínica.
+ */
 @Entity
 @Table(name = "anotacion_historia")
 @Data
@@ -23,9 +26,15 @@ public class AnotacionHistoria {
     @ManyToOne
     private Medico medico;
 
-    @Column(name = "fecha", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "fecha", nullable = false)
     private LocalDateTime fecha;
 
     @Column(name = "descripcion", nullable = false, columnDefinition = "TEXT")
     private String descripcion;
+
+    @Column(name = "observacion", columnDefinition = "TEXT")
+    private String observacion;
+
+    @Column(name = "diagnostico", nullable = false, columnDefinition = "TEXT")
+    private String diagnostico;
 }

@@ -10,44 +10,58 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Contrato REST de citas médicas.
+ */
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/cita")
 public interface CitaApi {
 
     /**
-     * Metodo test del servicio.
+     * Lista todas las citas, de la más reciente a la más antigua.
      *
-     * @return Servicio funcionando correctamente.
-     * @throws BadRequestException excepcion.
+     * @return lista de citas.
+     * @throws BadRequestException excepción de negocio.
      */
     @GetMapping(value = "/listar",
-            produces = {"application/json"},
-            consumes = {"application/json"})
+            produces = {"application/json"})
     ResponseEntity<List<Cita>> listarCitas()
             throws BadRequestException;
 
-
     /**
-     * Metodo test del servicio.
+     * Lista las citas dentro de un rango de fechas.
      *
-     * @return Servicio funcionando correctamente.
-     * @throws BadRequestException excepcion.
+     * @param fechaInicio inicio del rango.
+     * @param fechaFin    fin del rango.
+     * @return citas del rango.
+     * @throws BadRequestException si el rango es inválido.
      */
     @GetMapping(value = "/listar-rango",
-            produces = {"application/json"},
-            consumes = {"application/json"})
+            produces = {"application/json"})
     ResponseEntity<List<Cita>> listarCitasRango(
             @RequestParam LocalDateTime fechaInicio,
             @RequestParam LocalDateTime fechaFin
     )
             throws BadRequestException;
 
+    /**
+     * Consulta una cita por id.
+     *
+     * @param id id de la cita.
+     * @return la cita solicitada.
+     * @throws BadRequestException si no existe (404).
+     */
+    @GetMapping(value = "/{id}",
+            produces = {"application/json"})
+    ResponseEntity<Cita> buscarCita(@PathVariable Long id)
+            throws BadRequestException;
 
     /**
-     * Metodo test del servicio.
+     * Agenda una nueva cita.
      *
-     * @return Servicio funcionando correctamente.
-     * @throws BadRequestException excepcion.
+     * @param cita datos de la cita.
+     * @return respuesta con el resultado.
+     * @throws BadRequestException si no cumple las reglas de negocio.
      */
     @PostMapping(value = "/crear",
             produces = {"application/json"},
@@ -57,14 +71,14 @@ public interface CitaApi {
     )
             throws BadRequestException;
 
-
     /**
-     * Metodo test del servicio.
+     * Edita una cita existente.
      *
-     * @return Servicio funcionando correctamente.
-     * @throws BadRequestException excepcion.
+     * @param cita datos de la cita, incluido su id.
+     * @return respuesta con el resultado.
+     * @throws BadRequestException si la cita no existe o no puede modificarse.
      */
-    @PostMapping(value = "/actualizar",
+    @PutMapping(value = "/actualizar",
             produces = {"application/json"},
             consumes = {"application/json"})
     ResponseEntity<MiRespuestaRS> actualizarCita(

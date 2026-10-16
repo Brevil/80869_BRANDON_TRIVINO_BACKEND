@@ -3,8 +3,12 @@ package com.uniminuto.clinica.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Fórmula médica prescrita por un veterinario a una mascota dentro de una cita.
+ */
 @Entity
 @Table(name = "formula_medica")
 @Data
@@ -19,11 +23,28 @@ public class FormulaMedica {
     private Cita cita;
 
     @ManyToOne
+    @JoinColumn(name = "mascota_id", nullable = false)
+    private Mascota mascota;
+
+    @ManyToOne
+    @JoinColumn(name = "medico_id", nullable = false)
+    private Medico medico;
+
+    @ManyToOne
     @JoinColumn(name = "medicamento_id", nullable = false)
     private Medicamento medicamento;
 
+    @Column(name = "fecha_emision", nullable = false)
+    private LocalDate fechaEmision;
+
     @Column(name = "dosis", nullable = false, columnDefinition = "TEXT")
     private String dosis;
+
+    @Column(name = "frecuencia", nullable = false, length = 100)
+    private String frecuencia;
+
+    @Column(name = "duracion_dias", nullable = false)
+    private Integer duracionDias;
 
     @Column(name = "indicaciones", columnDefinition = "TEXT")
     private String indicaciones;
